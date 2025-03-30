@@ -5,155 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Hospital Stock Entry Form</title>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #ffffff);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        h2 {
-            text-align: center;
-            color: #00796b;
-            margin-bottom: 20px;
-            font-size: 32px;
-            font-weight: bold;
-        }
-
-        form {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            margin: 30px auto;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        form:hover {
-            transform: translateY(-5px);
-        }
-
-        .stockItem {
-            background: #f1f8e9;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            border: 1px solid #b0bec5;
-            transition: background 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .stockItem:hover {
-            background: #dce775;
-            border-color: #00796b;
-        }
-
-        .serial-number {
-            font-weight: bold;
-            background: #00796b;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            min-width: 40px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .stockItem select,
-        .stockItem input,
-        .remove-btn,
-        .add-btn {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #b0bec5;
-            outline: none;
-            min-width: 150px;
-            transition: all 0.3s ease;
-        }
-
-        .stockItem select:focus,
-        .stockItem input:focus {
-            border-color: #00796b;
-            box-shadow: 0 0 8px rgba(0, 121, 107, 0.3);
-        }
-
-        .remove-btn {
-            background: #d32f2f;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-
-        .remove-btn:hover {
-            background: #b71c1c;
-        }
-
-        .add-btn {
-            background: #00796b;
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin: 15px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .add-btn:hover {
-            background: #004d40;
-            transform: scale(1.02);
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 10px 0 6px;
-        }
-
-        .availableQuantity {
-            font-weight: bold;
-            color: #00796b;
-            margin-left: 10px;
-        }
-
-        .customNameInput {
-            display: block;
-            width: 100%;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .autoDateTime {
-            text-align: center;
-            font-weight: bold;
-            color: #00796b;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 600px) {
-            form {
-                padding: 20px;
-            }
-            .stockItem {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .serial-number,
-            .stockItem select,
-            .stockItem input {
-                min-width: 100%;
-            }
-        }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #e0f7fa, #ffffff); margin: 0; padding: 20px; color: #333; }
+        h2 { text-align: center; color: #00796b; margin-bottom: 20px; font-size: 32px; font-weight: bold; }
+        form { background: #ffffff; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); max-width: 700px; margin: 30px auto; transition: transform 0.3s ease-in-out; }
+        form:hover { transform: translateY(-5px); }
+        .stockItem { background: #f1f8e9; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; border: 1px solid #b0bec5; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); }
+        .serial-number { font-weight: bold; background: #00796b; color: white; padding: 10px 15px; border-radius: 8px; min-width: 40px; text-align: center; font-size: 16px; }
+        .stockItem select, .stockItem input, .remove-btn, .add-btn { padding: 12px; border-radius: 8px; border: 1px solid #b0bec5; outline: none; min-width: 150px; }
+        .remove-btn { background: #d32f2f; color: white; cursor: pointer; border: none; }
+        .remove-btn:hover { background: #b71c1c; }
+        .add-btn { background: #00796b; color: white; padding: 14px; border: none; border-radius: 8px; cursor: pointer; width: 100%; margin: 15px 0; font-size: 16px; font-weight: bold; }
+        .add-btn:hover { background: #004d40; transform: scale(1.02); }
+        label { font-weight: bold; display: block; margin: 10px 0 6px; }
     </style>
 </head>
 <body>
@@ -171,9 +34,8 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput" oninput="updateAvailability(this)">
-                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required oninput="updateAvailability(this)">
-                <label class="availableQuantity">Available Quantity: 0</label>
+                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput">
+                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             </div>
         </div>
@@ -189,19 +51,11 @@
         <label for="supplierDateTime">Supplier Date & Time:</label>
         <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
 
-        <input type="text" id="autoDateTime" class="autoDateTime" readonly>
-
         <button type="submit" class="add-btn">Submit</button>
     </form>
 
     <script>
-        const availableQuantities = {
-            "Role": 100,
-            "Marcopol": 50,
-            "Cortton": 30,
-            "Register": 75,
-            "High Risk Consent": 20
-        };
+        const webAppURL = "YOUR_WEB_APP_URL_HERE"; // Replace with your Google Apps Script Web App URL
 
         function addStock() {
             const stockContainer = document.getElementById("stockContainer");
@@ -219,99 +73,48 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput" oninput="updateAvailability(this)">
-                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required oninput="updateAvailability(this)">
-                <label class="availableQuantity">Available Quantity: 0</label>
+                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput">
+                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             `;
 
             stockContainer.appendChild(stockItem);
-            updateDisabledOptions();
         }
 
         function removeStock(button) {
             const stockContainer = document.getElementById("stockContainer");
             const stockItem = button.parentElement;
             stockContainer.removeChild(stockItem);
-            updateDisabledOptions();
-            updateAvailability(null);
-        }
-
-        function updateAvailability(element) {
-            const stockItem = element ? element.parentElement : null;
-            const selectProduct = stockItem ? stockItem.querySelector('select[name="stockName[]"]') : null;
-            const customInput = stockItem ? stockItem.querySelector('.customNameInput') : null;
-            const availableLabel = stockItem ? stockItem.querySelector('.availableQuantity') : null;
-            const requiredQtyInput = stockItem ? stockItem.querySelector('input[name="quantity[]"]') : null;
-
-            if (selectProduct && selectProduct.value) {
-                customInput.classList.add('hidden');
-                const product = selectProduct.value;
-                let availableQty = availableQuantities[product];
-
-                if (requiredQtyInput) {
-                    let requiredQty = parseInt(requiredQtyInput.value) || 0;
-                    availableQty -= requiredQty;
-                    if (availableQty < 0) availableQty = 0;
-                    availableQuantities[product] = availableQty;
-                }
-
-                availableLabel.textContent = `Available Quantity: ${availableQty}`;
-            } else if (customInput) {
-                customInput.classList.remove('hidden');
-                availableLabel.textContent = "Available Quantity: 0";
-            }
-
-            updateDisabledOptions();
-        }
-
-        function updateDisabledOptions() {
-            const selectElements = document.querySelectorAll('select[name="stockName[]"]');
-            selectElements.forEach(select => {
-                const selectedValues = Array.from(selectElements)
-                    .map(sel => sel.value)
-                    .filter(val => val);
-
-                select.querySelectorAll('option').forEach(option => {
-                    option.disabled = selectedValues.includes(option.value) && select.value !== option.value;
-                });
-            });
         }
 
         document.getElementById("stockForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
-            document.getElementById("autoDateTime").value = new Date().toLocaleString();
-
             const formData = {
                 receiverName: document.getElementById("receiverName").value,
                 supplierName: document.getElementById("supplierName").value,
                 supplierDateTime: document.getElementById("supplierDateTime").value,
-                dateTime: document.getElementById("autoDateTime").value,
                 stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
                     name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
                     quantity: item.querySelector('input[name="quantity[]"]').value
                 }))
             };
 
-            fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
+            fetch(webAppURL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             })
             .then(response => response.json())
             .then(data => {
-                alert("Data submitted successfully!");
-                console.log(data);
+                alert("✅ Data submitted successfully!");
+                document.getElementById("stockForm").reset();
             })
             .catch(error => {
-                console.error("Error:", error);
+                console.error("❌ Error:", error);
                 alert("Submission failed!");
             });
         });
-
-        // Initial Date-Time Update
-        document.getElementById("autoDateTime").value = new Date().toLocaleString();
     </script>
 </body>
 </html>

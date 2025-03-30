@@ -278,37 +278,42 @@
             });
         }
 
-        document.getElementById("stockForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+        d<form id="stockForm">
+    <input type="text" id="receiverName" name="receiverName" required>
+    <input type="text" id="supplierName" name="supplierName" required>
+    <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
+    <button type="submit">Submit</button>
+</form>
 
-    const formData = {
-        receiverName: document.getElementById("receiverName").value,
-        supplierName: document.getElementById("supplierName").value,
-        supplierDateTime: document.getElementById("supplierDateTime").value,
-        dateTime: new Date().toLocaleString(),
-        stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
-            name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
-            quantity: item.querySelector('input[name="quantity[]"]').value
-        }))
-    };
+<script>
+    document.getElementById("stockForm").addEventListener("submit", function(event) {
+        event.preventDefault();
 
-    fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert("Data submitted successfully!");
-        console.log(data);
-        this.reset();
-        document.getElementById("autoDateTime").value = new Date().toLocaleString();
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("Submission failed!");
+        const formData = {
+            receiverName: document.getElementById("receiverName").value,
+            supplierName: document.getElementById("supplierName").value,
+            supplierDateTime: document.getElementById("supplierDateTime").value,
+            dateTime: new Date().toLocaleString(),
+        };
+
+        // Google Apps Script ke URL par POST request bhejna
+        fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("✅ Data submitted successfully!");
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("❌ Error:", error);
+            alert("Submission failed!");
+        });
     });
-});
+
+
 
         // Initial Date-Time Update
         document.getElementById("autoDateTime").value = new Date().toLocaleString();

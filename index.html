@@ -58,6 +58,9 @@
         label {
             font-weight: bold;
         }
+        .custom-product {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -66,7 +69,7 @@
     <form id="stockForm">
         <div id="stockContainer">
             <div class="stockItem">
-                <select name="Product Name[]" required>
+                <select name="Product Name[]" required onchange="toggleCustomField(this)">
                     <option value="">Select Product</option>
                     <option value="Role">Role</option>
                     <option value="Marcopol">Marcopol</option>
@@ -74,7 +77,7 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="Custom Product Name[]" placeholder="Or Enter Custom Name">
+                <input type="text" name="Custom Product Name[]" class="custom-product" placeholder="Or Enter Custom Name">
                 <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             </div>
@@ -101,4 +104,87 @@
 
         // Add another product
         function addStock() {
-            const stock
+            const stockItem = document.createElement("div");
+            stockItem.classList.add("stockItem");
+            stockItem.innerHTML = `
+                <select name="Product Name[]" required onchange="toggleCustomField(this)">
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="Register">Register</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                </select>
+                <input type="text" name="Custom Product Name[]" class="custom-product" placeholder="Or Enter Custom Name">
+                <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
+                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+            `;
+            stockContainer.appendChild(stockItem);
+        }
+
+        // Remove product
+        function removeStock(button) {
+            button.parentElement.remove();
+        }
+
+        // Toggle custom product field
+        function toggleCustomField(selectElement) {
+            const customField = selectElement.nextElementSibling;
+            if (selectElement.value === '') {
+                customField.style.display = 'block';
+            } else {
+                customField.style.display = 'none';
+            }
+        }
+
+        // Submit form data
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const receiverName = document.getElementById('receiverName').value;
+            const supplierName = document.getElementById('supplierName').value;
+            const supplierDateTime = document.getElementById('supplierDateTime').value;
+
+            const formData = new FormData(form);
+
+            // Add common data to the formData
+            formData.append('Receiver Name', receiverName);
+            formData.append('Supplier Name', supplierName);
+            formData.append('Supplier Date & Time', supplierDateTime);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result === "success") {
+                    alert("✅ Data submitted successfully!");
+                    form.reset();
+                    document.getElementById("stockContainer").innerHTML = `
+                        <div class="stockItem">
+                            <select name="Product Name[]" required onchange="toggleCustomField(this)">
+                                <option value="">Select Product</option>
+                                <option value="Role">Role</option>
+                                <option value="Marcopol">Marcopol</option>
+                                <option value="Cortton">Cortton</option>
+                                <option value="Register">Register</option>
+                                <option value="High Risk Consent">High Risk Consent</option>
+                            </select>
+                            <input type="text" name="Custom Product Name[]" class="custom-product" placeholder="Or Enter Custom Name">
+                            <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
+                            <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+                        </div>
+                    `;
+                } else {
+                    alert("❌ Submission failed!");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Submission failed!');
+            });
+        });
+    </script>
+</body>
+</html>

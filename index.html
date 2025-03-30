@@ -97,54 +97,8 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
         const form = document.getElementById('stockForm');
+        const stockContainer = document.getElementById("stockContainer");
 
         // Add another product
         function addStock() {
-            const stockContainer = document.getElementById("stockContainer");
-            const stockItem = document.createElement("div");
-            stockItem.classList.add("stockItem");
-            stockItem.innerHTML = `
-                <select name="Product Name[]" required>
-                    <option value="">Select Product</option>
-                    <option value="Role">Role</option>
-                    <option value="Marcopol">Marcopol</option>
-                    <option value="Cortton">Cortton</option>
-                    <option value="Register">Register</option>
-                    <option value="High Risk Consent">High Risk Consent</option>
-                </select>
-                <input type="text" name="Custom Product Name[]" placeholder="Or Enter Custom Name">
-                <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
-                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
-            `;
-            stockContainer.appendChild(stockItem);
-        }
-
-        // Remove product
-        function removeStock(button) {
-            const stockContainer = document.getElementById("stockContainer");
-            const stockItem = button.parentElement;
-            stockContainer.removeChild(stockItem);
-        }
-
-        // Submit form data
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const receiverName = document.getElementById('receiverName').value;
-            const supplierName = document.getElementById('supplierName').value;
-            const supplierDateTime = document.getElementById('supplierDateTime').value;
-
-            const formData = new FormData(form);
-
-            // Add common data to the formData
-            formData.append('Receiver Name', receiverName);
-            formData.append('Supplier Name', supplierName);
-            formData.append('Supplier Date & Time', supplierDateTime);
-
-            fetch(scriptURL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.result === "
+            const stock

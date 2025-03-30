@@ -29,10 +29,7 @@
             max-width: 800px;
             margin: 30px auto;
             transition: transform 0.3s ease-in-out;
-        }
-
-        form:hover {
-            transform: translateY(-5px);
+            border: 2px solid #00796b;
         }
 
         .stockItem {
@@ -45,13 +42,6 @@
             gap: 15px;
             align-items: center;
             border: 1px solid #b0bec5;
-            transition: background 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .stockItem:hover {
-            background: #dce775;
-            border-color: #00796b;
         }
 
         .serial-number {
@@ -75,12 +65,6 @@
             outline: none;
             min-width: 150px;
             transition: all 0.3s ease;
-        }
-
-        .stockItem select:focus,
-        .stockItem input:focus {
-            border-color: #00796b;
-            box-shadow: 0 0 8px rgba(0, 121, 107, 0.3);
         }
 
         .remove-btn {
@@ -118,45 +102,43 @@
             font-weight: bold;
             display: block;
             margin: 10px 0 6px;
+            color: #00796b;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #b0bec5;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            background: #e0f2f1;
+            color: #00796b;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #00796b;
+            box-shadow: 0 0 8px rgba(0, 121, 107, 0.4);
+            background: #ffffff;
         }
 
         .availableQuantity {
             font-weight: bold;
             color: #00796b;
-            margin-left: 10px;
-        }
-
-        .customNameInput {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #b0bec5;
+            margin-top: 5px;
         }
 
         .hidden {
             display: none;
         }
 
-        .autoDateTime {
-            text-align: center;
-            font-weight: bold;
-            color: #00796b;
-            margin-top: 10px;
-        }
-
         @media (max-width: 600px) {
             form {
                 padding: 20px;
-            }
-            .stockItem {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .serial-number,
-            .stockItem select,
-            .stockItem input {
-                min-width: 100%;
             }
         }
     </style>
@@ -164,6 +146,7 @@
 <body>
 
     <h2>🏥 Hospital Stock Entry Form</h2>
+
     <form id="stockForm">
         <div id="stockContainer">
             <div class="stockItem">
@@ -176,8 +159,8 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput" oninput="updateAvailability(this)">
-                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required oninput="updateAvailability(this)">
+                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput hidden">
+                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
                 <label class="availableQuantity">Available Quantity: 0</label>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             </div>
@@ -186,15 +169,13 @@
         <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
 
         <label for="receiverName">Receiver Name:</label>
-        <input type="text" id="receiverName" name="receiverName" required>
+        <input type="text" id="receiverName" name="receiverName" placeholder="Enter Receiver Name" required>
 
         <label for="supplierName">Supplier Name:</label>
-        <input type="text" id="supplierName" name="supplierName" required>
+        <input type="text" id="supplierName" name="supplierName" placeholder="Enter Supplier Name" required>
 
         <label for="supplierDateTime">Supplier Date & Time:</label>
         <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
-
-        <input type="text" id="autoDateTime" class="autoDateTime" readonly>
 
         <button type="submit" class="add-btn">Submit</button>
     </form>
@@ -224,96 +205,64 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput" oninput="updateAvailability(this)">
-                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required oninput="updateAvailability(this)">
+                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput hidden">
+                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
                 <label class="availableQuantity">Available Quantity: 0</label>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             `;
 
             stockContainer.appendChild(stockItem);
-            updateDisabledOptions();
         }
 
         function removeStock(button) {
             const stockContainer = document.getElementById("stockContainer");
             const stockItem = button.parentElement;
+            const selectedProduct = stockItem.querySelector('select[name="stockName[]"]').value;
+            if (selectedProduct) {
+                availableQuantities[selectedProduct] += parseInt(stockItem.querySelector('input[name="quantity[]"]').value) || 0;
+            }
             stockContainer.removeChild(stockItem);
-            updateDisabledOptions();
+            updateAvailability();
         }
 
         function updateAvailability(element) {
-            const stockItem = element ? element.parentElement : null;
-            const selectProduct = stockItem ? stockItem.querySelector('select[name="stockName[]"]') : null;
-            const customInput = stockItem ? stockItem.querySelector('.customNameInput') : null;
-            const availableLabel = stockItem ? stockItem.querySelector('.availableQuantity') : null;
-            const requiredQtyInput = stockItem ? stockItem.querySelector('input[name="quantity[]"]') : null;
+            const stockItems = document.querySelectorAll('.stockItem');
 
-            if (selectProduct && selectProduct.value) {
-                customInput.classList.add('hidden');
+            const selectedProducts = Array.from(document.querySelectorAll('select[name="stockName[]"]'))
+                .map(select => select.value)
+                .filter(val => val);
+
+            stockItems.forEach(item => {
+                const selectProduct = item.querySelector('select[name="stockName[]"]');
+                const customInput = item.querySelector('.customNameInput');
+                const requiredQtyInput = item.querySelector('input[name="quantity[]"]');
+                const availableLabel = item.querySelector('.availableQuantity');
                 const product = selectProduct.value;
-                let availableQty = availableQuantities[product];
 
-                if (requiredQtyInput) {
-                    let requiredQty = parseInt(requiredQtyInput.value) || 0;
-                    availableQty -= requiredQty;
-                    if (availableQty < 0) availableQty = 0;
-                    availableQuantities[product] = availableQty;
-                }
-
-                availableLabel.textContent = `Available Quantity: ${availableQty}`;
-            } else if (customInput) {
-                customInput.classList.remove('hidden');
-                availableLabel.textContent = "Available Quantity: 0";
-            }
-
-            updateDisabledOptions();
-        }
-
-        function updateDisabledOptions() {
-            const selectElements = document.querySelectorAll('select[name="stockName[]"]');
-            selectElements.forEach(select => {
-                const selectedValues = Array.from(selectElements)
-                    .map(sel => sel.value)
-                    .filter(val => val);
-
-                select.querySelectorAll('option').forEach(option => {
-                    option.disabled = selectedValues.includes(option.value) && select.value !== option.value;
+                // Disable already selected products
+                const options = selectProduct.querySelectorAll('option');
+                options.forEach(option => {
+                    option.disabled = selectedProducts.includes(option.value) && option.value !== product;
                 });
+
+                if (product) {
+                    customInput.classList.add('hidden'); 
+                    let availableQty = availableQuantities[product];
+                    const requiredQty = parseInt(requiredQtyInput.value) || 0;
+                    availableQty = availableQty - requiredQty;
+                    availableQuantities[product] = availableQty;
+                    availableLabel.textContent = `Available Quantity: ${availableQty}`;
+                } else {
+                    customInput.classList.remove('hidden');
+                    availableLabel.textContent = `Available Quantity: 0`;
+                }
             });
         }
 
         document.getElementById("stockForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            document.getElementById("autoDateTime").value = new Date().toLocaleString();
-
-            const formData = {
-                receiverName: document.getElementById("receiverName").value,
-                supplierName: document.getElementById("supplierName").value,
-                supplierDateTime: document.getElementById("supplierDateTime").value,
-                dateTime: document.getElementById("autoDateTime").value,
-                stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
-                    name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
-                    quantity: item.querySelector('input[name="quantity[]"]').value
-                }))
-            };
-
-            fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert("✅ Data submitted successfully!");
-                console.log(data);
-            })
-            .catch(error => {
-                console.error("❌ Error:", error);
-                alert("Submission failed!");
-            });
+            alert("✅ Form Submitted Successfully!");
         });
-
-        document.getElementById("autoDateTime").value = new Date().toLocaleString();
     </script>
 </body>
 </html>

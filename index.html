@@ -58,9 +58,6 @@
         label {
             font-weight: bold;
         }
-        .custom-product {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -100,9 +97,12 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
         const form = document.getElementById('stockForm');
-        const stockContainer = document.getElementById("stockContainer");
 
+        // Add New Product Field
         function addStock() {
+            const stockContainer = document.getElementById("stockContainer");
+            const stockItemCount = stockContainer.children.length + 1;
+
             const stockItem = document.createElement("div");
             stockItem.classList.add("stockItem");
             stockItem.innerHTML = `
@@ -121,22 +121,34 @@
             stockContainer.appendChild(stockItem);
         }
 
+        // Remove Product Field
         function removeStock(button) {
-            button.parentElement.remove();
+            const stockContainer = document.getElementById("stockContainer");
+            const stockItem = button.parentElement;
+            stockContainer.removeChild(stockItem);
         }
 
+        // Toggle Custom Field
         function toggleCustomField(selectElement) {
             const customField = selectElement.nextElementSibling;
             if (selectElement.value === '') {
-                customField.style.display = 'block';
+                customField.style.display = 'block'; // Show custom field if nothing selected
             } else {
-                customField.style.display = 'none';
-                customField.value = ''; // Clear custom input if product is selected
+                customField.style.display = 'none';  // Hide custom field if product is selected
+                customField.value = '';              // Clear custom product name
             }
         }
 
+        // Submit Form
         form.addEventListener('submit', function(event) {
             event.preventDefault();
+
+            // Clear custom fields data before submitting
+            document.querySelectorAll('.custom-product').forEach(input => {
+                if (input.style.display === 'none') {
+                    input.value = '';  // Clear data if field is hidden
+                }
+            });
 
             const formData = new FormData(form);
 

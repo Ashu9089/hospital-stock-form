@@ -282,15 +282,18 @@
     event.preventDefault(); // Prevent default form submission
 
     const formData = {
-        receiverName: document.getElementById("receiverName").value,
-        supplierName: document.getElementById("supplierName").value,
-        supplierDateTime: document.getElementById("supplierDateTime").value,
-        dateTime: new Date().toLocaleString(),
-        stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
-            name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
-            quantity: item.querySelector('input[name="quantity[]"]').value
-        }))
-    };
+    receiverName: document.getElementById("receiverName").value,
+    supplierName: document.getElementById("supplierName").value,
+    supplierDateTime: document.getElementById("supplierDateTime").value,
+    dateTime: document.getElementById("autoDateTime").value,
+    stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
+        name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
+        quantity: item.querySelector('input[name="quantity[]"]').value
+    }))
+};
+
+console.log("Form Data:", formData);  // ✅ Add this line
+
 
     fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
     method: "POST",

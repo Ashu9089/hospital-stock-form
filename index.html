@@ -1,36 +1,153 @@
-<script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
-    const form = document.getElementById('stockForm');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Hospital Stock Entry Form</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+        form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        .stockItem {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        select, input {
+            padding: 10px;
+            border: 1px solid #00796b;
+            border-radius: 5px;
+            width: 100%;
+        }
+        .remove-btn, .add-btn, .submit-btn {
+            background: #00796b;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .remove-btn {
+            background: #d32f2f;
+        }
+        .remove-btn:hover, .add-btn:hover, .submit-btn:hover {
+            opacity: 0.9;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+    <h2>🏥 Hospital Stock Entry Form</h2>
+    <form id="stockForm">
+        <div id="stockContainer">
+            <div class="stockItem">
+                <select name="Product Name" required>
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="Register">Register</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                </select>
+                <input type="text" name="Custom Product Name" placeholder="Or Enter Custom Name">
+                <input type="number" name="Quantity" placeholder="Required Quantity" required>
+                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+            </div>
+        </div>
 
-        const formData = new FormData(form);
-        const jsonData = {};
+        <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
 
-        formData.forEach((value, key) => {
-            jsonData[key] = value;
+        <label for="receiverName">Receiver Name:</label>
+        <input type="text" id="receiverName" name="Receiver Name" required>
+
+        <label for="supplierName">Supplier Name:</label>
+        <input type="text" id="supplierName" name="Supplier Name" required>
+
+        <label for="supplierDateTime">Supplier Date & Time:</label>
+        <input type="datetime-local" id="supplierDateTime" name="Supplier Date & Time" required>
+
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
+        const form = document.getElementById('stockForm');
+
+        function addStock() {
+            const stockContainer = document.getElementById("stockContainer");
+            const stockItemCount = stockContainer.children.length + 1;
+
+            const stockItem = document.createElement("div");
+            stockItem.classList.add("stockItem");
+            stockItem.innerHTML = `
+                <select name="Product Name" required>
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="Register">Register</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                </select>
+                <input type="text" name="Custom Product Name" placeholder="Or Enter Custom Name">
+                <input type="number" name="Quantity" placeholder="Required Quantity" required>
+                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+            `;
+            stockContainer.appendChild(stockItem);
+        }
+
+        function removeStock(button) {
+            const stockContainer = document.getElementById("stockContainer");
+            const stockItem = button.parentElement;
+            stockContainer.removeChild(stockItem);
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.result === "success") {
+                    alert("✅ Data submitted successfully!");
+                    form.reset();
+                } else {
+                    alert("❌ Submission failed!");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Submission failed!');
+            });
         });
-
-        fetch(scriptURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.result === 'success') {
-                alert("✅ Data submitted successfully!");
-                form.reset();
-            } else {
-                alert("❌ Submission failed!");
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('❌ Submission failed!');
-        });
-    });
-</script>
+    </script>
+</body>
+</html>

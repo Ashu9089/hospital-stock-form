@@ -292,25 +292,26 @@
         }))
     };
 
-    console.log(formData);  // Debugging line
+    console.log("Form Data:", formData);  // Debugging Line
 
-    fetch("YOUR_WEB_APP_URL", {
+    fetch("https://script.google.com/macros/s/AKfycbxNEMcBM1cLFxIx0MaK82fYWRx84Vx32mutYxXgTHYBZQOkZQXc0juCGJxO964CrZyc/exec", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)  // Ensure this is JSON
+        body: JSON.stringify(formData)  // Ensure this line is present
     })
     .then(response => response.json())
     .then(data => {
+        console.log("Server Response:", data);  // Debugging Line
         alert("Data submitted successfully!");
-        console.log(data);
     })
     .catch(error => {
-        console.error("Error:", error);
+        console.error("Submission Failed:", error);
         alert("Submission failed!");
     });
 });
+
 
 
 

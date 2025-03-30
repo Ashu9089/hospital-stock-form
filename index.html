@@ -127,7 +127,12 @@
 
         function toggleCustomField(selectElement) {
             const customField = selectElement.nextElementSibling;
-            customField.style.display = selectElement.value === '' ? 'block' : 'none';
+            if (selectElement.value === '') {
+                customField.style.display = 'block';
+            } else {
+                customField.style.display = 'none';
+                customField.value = ''; // Clear custom input if product is selected
+            }
         }
 
         form.addEventListener('submit', function(event) {

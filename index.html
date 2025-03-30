@@ -66,7 +66,7 @@
     <form id="stockForm">
         <div id="stockContainer">
             <div class="stockItem">
-                <select name="Product Name[]" required onchange="toggleCustomField(this)">
+                <select name="Product Name" onchange="toggleCustomBox(this)" required>
                     <option value="">Select Product</option>
                     <option value="Role">Role</option>
                     <option value="Marcopol">Marcopol</option>
@@ -74,8 +74,8 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="Custom Product Name[]" class="custom-product" placeholder="Or Enter Custom Name">
-                <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
+                <input type="text" name="Custom Product Name" placeholder="Or Enter Custom Name" class="customProduct" style="display:none;">
+                <input type="number" name="Quantity" placeholder="Required Quantity" required>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             </div>
         </div>
@@ -98,15 +98,12 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
         const form = document.getElementById('stockForm');
 
-        // Add New Product Field
         function addStock() {
             const stockContainer = document.getElementById("stockContainer");
-            const stockItemCount = stockContainer.children.length + 1;
-
             const stockItem = document.createElement("div");
             stockItem.classList.add("stockItem");
             stockItem.innerHTML = `
-                <select name="Product Name[]" required onchange="toggleCustomField(this)">
+                <select name="Product Name" onchange="toggleCustomBox(this)" required>
                     <option value="">Select Product</option>
                     <option value="Role">Role</option>
                     <option value="Marcopol">Marcopol</option>
@@ -114,43 +111,44 @@
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
                 </select>
-                <input type="text" name="Custom Product Name[]" class="custom-product" placeholder="Or Enter Custom Name">
-                <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
+                <input type="text" name="Custom Product Name" placeholder="Or Enter Custom Name" class="customProduct" style="display:none;">
+                <input type="number" name="Quantity" placeholder="Required Quantity" required>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             `;
             stockContainer.appendChild(stockItem);
         }
 
-        // Remove Product Field
         function removeStock(button) {
             const stockContainer = document.getElementById("stockContainer");
-            const stockItem = button.parentElement;
-            stockContainer.removeChild(stockItem);
+            stockContainer.removeChild(button.parentElement);
         }
 
-        // Toggle Custom Field
-        function toggleCustomField(selectElement) {
-            const customField = selectElement.nextElementSibling;
+        function toggleCustomBox(selectElement) {
+            const customInput = selectElement.parentElement.querySelector('.customProduct');
             if (selectElement.value === '') {
-                customField.style.display = 'block'; // Show custom field if nothing selected
+                customInput.style.display = 'block';
             } else {
-                customField.style.display = 'none';  // Hide custom field if product is selected
-                customField.value = '';              // Clear custom product name
+                customInput.style.display = 'none';
+                customInput.value = '';  // Clear custom input if not needed
             }
         }
 
-        // Submit Form
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // Clear custom fields data before submitting
-            document.querySelectorAll('.custom-product').forEach(input => {
-                if (input.style.display === 'none') {
-                    input.value = '';  // Clear data if field is hidden
-                }
-            });
+            const formData = new FormData();
+            formData.append("Receiver Name", document.getElementById("receiverName").value);
+            formData.append("Supplier Name", document.getElementById("supplierName").value);
+            formData.append("Supplier Date & Time", document.getElementById("supplierDateTime").value);
 
-            const formData = new FormData(form);
+            document.querySelectorAll('.stockItem').forEach((item, index) => {
+                const product = item.querySelector('select[name="Product Name"]').value;
+                const customProduct = item.querySelector('.customProduct').value || null;
+                const quantity = item.querySelector('input[name="Quantity"]').value;
+
+                formData.append(`Product Name ${index + 1}`, product || customProduct || null);
+                formData.append(`Quantity ${index + 1}`, quantity);
+            });
 
             fetch(scriptURL, {
                 method: 'POST',
@@ -161,21 +159,6 @@
                 if (result.result === "success") {
                     alert("✅ Data submitted successfully!");
                     form.reset();
-                    document.getElementById("stockContainer").innerHTML = `
-                        <div class="stockItem">
-                            <select name="Product Name[]" required onchange="toggleCustomField(this)">
-                                <option value="">Select Product</option>
-                                <option value="Role">Role</option>
-                                <option value="Marcopol">Marcopol</option>
-                                <option value="Cortton">Cortton</option>
-                                <option value="Register">Register</option>
-                                <option value="High Risk Consent">High Risk Consent</option>
-                            </select>
-                            <input type="text" name="Custom Product Name[]" class="custom-product" placeholder="Or Enter Custom Name">
-                            <input type="number" name="Quantity[]" placeholder="Required Quantity" required>
-                            <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
-                        </div>
-                    `;
                 } else {
                     alert("❌ Submission failed!");
                 }

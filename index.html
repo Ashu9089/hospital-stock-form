@@ -9,9 +9,22 @@
     <h2>🏥 Hospital Stock Entry Form</h2>
 
     <form id="stockForm">
+        <!-- Product Name Section -->
         <label for="productName">Product Name:</label>
-        <input type="text" id="productName" name="Product Name" placeholder="Enter Product Name" required>
+        <select id="productSelect" name="Product Name" onchange="toggleCustomInput()">
+            <option value="">Select Product</option>
+            <option value="Role">Role</option>
+            <option value="Marcopol">Marcopol</option>
+            <option value="Cortton">Cortton</option>
+            <option value="Register">Register</option>
+            <option value="High Risk Consent">High Risk Consent</option>
+            <option value="Other">Other (Enter Below)</option>
+        </select>
 
+        <!-- Custom Product Name (Hidden by Default) -->
+        <input type="text" id="customProduct" name="Product Name" placeholder="Enter Custom Product Name" style="display: none;">
+
+        <!-- Other Form Fields -->
         <label for="receiverName">Receiver Name:</label>
         <input type="text" id="receiverName" name="Receiver Name" placeholder="Enter Receiver Name" required>
 
@@ -25,11 +38,33 @@
     </form>
 
     <script>
+        function toggleCustomInput() {
+            const productSelect = document.getElementById("productSelect");
+            const customProduct = document.getElementById("customProduct");
+
+            if (productSelect.value === "Other") {
+                customProduct.style.display = "block";
+                customProduct.required = true;
+            } else {
+                customProduct.style.display = "none";
+                customProduct.required = false;
+            }
+        }
+
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
         const form = document.getElementById('stockForm');
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
+
+            // Handle both dropdown and custom input
+            const productSelect = document.getElementById("productSelect");
+            const customProduct = document.getElementById("customProduct");
+            if (productSelect.value === "Other") {
+                form.elements["Product Name"].value = customProduct.value;
+            } else {
+                form.elements["Product Name"].value = productSelect.value;
+            }
 
             const formData = new FormData(form);
 
@@ -41,6 +76,7 @@
             .then(result => {
                 alert("✅ Data submitted successfully!");
                 form.reset();
+                toggleCustomInput(); // Reset the custom input visibility
             })
             .catch(error => {
                 console.error('❌ Error:', error);

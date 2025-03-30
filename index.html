@@ -1,26 +1,42 @@
-<form id="dataForm">
-    <input type="text" name="inputText" required>
-    <button type="submit">Submit</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Data Submission</title>
+</head>
+<body>
+    <h2>Enter Your Name</h2>
+    <form id="dataForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Submit</button>
+    </form>
 
-<script>
-    document.getElementById('dataForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
+    <p id="responseMessage"></p>
+
+    <script>
+        document.getElementById("dataForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+
+            fetch('https://script.google.com/macros/s/AKfycbzzBy09Ckvr2FBo0XzSj_AV8wCv26Q5E4fMvz-E_PS0VNmAESe295f31VXsf3QgNabx/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `name=${encodeURIComponent(name)}`
+            })
+            .then(response => response.text())
+            .then(result => {
+                document.getElementById("responseMessage").innerText = result;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("responseMessage").innerText = "Submission failed!";
+            });
         });
-
-        fetch('https://script.google.com/macros/s/AKfycbzzBy09Ckvr2FBo0XzSj_AV8wCv26Q5E4fMvz-E_PS0VNmAESe295f31VXsf3QgNabx/exec', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.text())
-        .then(result => alert(result))
-        .catch(error => alert('Submission failed: ' + error));
-    });
-</script>
+    </script>
+</body>
+</html>

@@ -2,33 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Hospital Stock Entry Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        form { background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; }
+        .stock-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        .remove-btn { background: red; color: white; border: none; cursor: pointer; }
+        .add-btn { background: green; color: white; border: none; cursor: pointer; }
+    </style>
 </head>
 <body>
+
     <h2>🏥 Hospital Stock Entry Form</h2>
     <form id="stockForm">
-        <label for="receiverName">Receiver Name:</label>
-        <input type="text" id="receiverName" name="receiverName" required><br><br>
-
-        <label for="supplierName">Supplier Name:</label>
-        <input type="text" id="supplierName" name="supplierName" required><br><br>
-
-        <label for="supplierDateTime">Supplier Date & Time:</label>
-        <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required><br><br>
-
-        <div id="productsContainer">
-            <div class="productItem">
-                <label>Product Name:</label>
-                <input type="text" name="productName" placeholder="Enter Product Name" required>
-
-                <label>Quantity:</label>
-                <input type="number" name="quantity" placeholder="Enter Quantity" required>
-
-                <button type="button" onclick="removeProduct(this)">❌ Remove</button>
+        <div id="stockContainer">
+            <div class="stock-item">
+                <select name="productName[]" required>
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Register">Register</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                </select>
+                <input type="text" name="customProductName[]" placeholder="Or Enter Custom Name (optional)">
+                <input type="number" name="quantity[]" placeholder="Required Quantity" required>
+                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             </div>
         </div>
+        <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
 
-        <button type="button" onclick="addProduct()">➕ Add Another Product</button><br><br>
+        <input type="text" name="receiverName" placeholder="Receiver Name" required>
+        <input type="text" name="supplierName" placeholder="Supplier Name" required>
+        <input type="datetime-local" name="supplierDateTime" required>
 
         <button type="submit">Submit</button>
     </form>
@@ -36,66 +44,66 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
         const form = document.getElementById('stockForm');
+        const stockContainer = document.getElementById('stockContainer');
 
-        function addProduct() {
-            const container = document.getElementById('productsContainer');
-            const productItem = document.createElement('div');
-            productItem.classList.add('productItem');
-            productItem.innerHTML = `
-                <label>Product Name:</label>
-                <input type="text" name="productName" placeholder="Enter Product Name" required>
-                <label>Quantity:</label>
-                <input type="number" name="quantity" placeholder="Enter Quantity" required>
-                <button type="button" onclick="removeProduct(this)">❌ Remove</button>
+        function addStock() {
+            const stockItem = document.createElement('div');
+            stockItem.classList.add('stock-item');
+            stockItem.innerHTML = `
+                <select name="productName[]" required>
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Register">Register</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                </select>
+                <input type="text" name="customProductName[]" placeholder="Or Enter Custom Name (optional)">
+                <input type="number" name="quantity[]" placeholder="Required Quantity" required>
+                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
             `;
-            container.appendChild(productItem);
+            stockContainer.appendChild(stockItem);
         }
 
-        function removeProduct(button) {
+        function removeStock(button) {
             button.parentElement.remove();
         }
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const receiverName = document.getElementById('receiverName').value;
-            const supplierName = document.getElementById('supplierName').value;
-            const supplierDateTime = document.getElementById('supplierDateTime').value;
-
-            const products = Array.from(document.querySelectorAll('.productItem')).map(item => ({
-                productName: item.querySelector('input[name="productName"]').value,
-                quantity: item.querySelector('input[name="quantity"]').value
-            }));
-
-            const data = {
-                receiverName,
-                supplierName,
-                supplierDateTime,
-                products
-            };
-
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.result === 'success') {
-                    alert('✅ Data submitted successfully!');
-                    form.reset();
-                    document.getElementById('productsContainer').innerHTML = '';
-                } else {
-                    alert('❌ Submission failed!');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('❌ Submission failed!');
-            });
+            const formData = new FormData(form);
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.result === 'success') {
+                        alert('Data submitted successfully!');
+                        form.reset();
+                        stockContainer.innerHTML = `
+                            <div class="stock-item">
+                                <select name="productName[]" required>
+                                    <option value="">Select Product</option>
+                                    <option value="Role">Role</option>
+                                    <option value="Register">Register</option>
+                                    <option value="Marcopol">Marcopol</option>
+                                    <option value="Cortton">Cortton</option>
+                                    <option value="High Risk Consent">High Risk Consent</option>
+                                </select>
+                                <input type="text" name="customProductName[]" placeholder="Or Enter Custom Name (optional)">
+                                <input type="number" name="quantity[]" placeholder="Required Quantity" required>
+                                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+                            </div>
+                        `;
+                    } else {
+                        alert('Error: ' + result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Submission failed!');
+                });
         });
     </script>
+
 </body>
 </html>

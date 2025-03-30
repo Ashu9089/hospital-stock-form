@@ -4,51 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Hospital Stock Entry Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        .product-item {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: #f9f9f9;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .remove-btn {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            background: #b71c1c;
+        }
+        button {
+            background: #00796b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #004d40;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            padding: 8px;
+            width: 100%;
+            margin: 5px 0 10px 0;
+        }
+    </style>
 </head>
 <body>
+
     <h2>🏥 Hospital Stock Entry Form</h2>
 
     <form id="stockForm">
-        <!-- Product Name Section -->
-        <label for="productName">Product Name:</label>
-        <select id="productSelect" name="Product Name" onchange="toggleCustomInput()">
-            <option value="">Select Product</option>
-            <option value="Role">Role</option>
-            <option value="Marcopol">Marcopol</option>
-            <option value="Cortton">Cortton</option>
-            <option value="Register">Register</option>
-            <option value="High Risk Consent">High Risk Consent</option>
-            <option value="Other">Other (Enter Below)</option>
-        </select>
+        <div id="productContainer">
+            <div class="product-item">
+                <select name="productName[]" onchange="toggleCustomInput(this)">
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="Register">Register</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                    <option value="Other">Other (Enter Below)</option>
+                </select>
 
-        <!-- Custom Product Name (Hidden by Default) -->
-        <input type="text" id="customProduct" name="Product Name" placeholder="Enter Custom Product Name" style="display: none;">
+                <input type="text" name="customProductName[]" placeholder="Enter Custom Product Name" style="display: none;">
 
-        <!-- Other Form Fields -->
+                <input type="number" name="quantity[]" placeholder="Required Quantity" min="1" required>
+
+                <button type="button" class="remove-btn" onclick="removeProduct(this)">❌ Remove</button>
+            </div>
+        </div>
+
+        <button type="button" onclick="addProduct()">➕ Add Another Product</button>
+
         <label for="receiverName">Receiver Name:</label>
-        <input type="text" id="receiverName" name="Receiver Name" placeholder="Enter Receiver Name" required>
+        <input type="text" id="receiverName" name="receiverName" required>
 
         <label for="supplierName">Supplier Name:</label>
-        <input type="text" id="supplierName" name="Supplier Name" placeholder="Enter Supplier Name" required>
+        <input type="text" id="supplierName" name="supplierName" required>
 
         <label for="supplierDateTime">Supplier Date & Time:</label>
-        <input type="datetime-local" id="supplierDateTime" name="Supplier Date & Time" required>
+        <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
 
         <button type="submit">Submit</button>
     </form>
 
     <script>
-        function toggleCustomInput() {
-            const productSelect = document.getElementById("productSelect");
-            const customProduct = document.getElementById("customProduct");
+        function toggleCustomInput(selectElement) {
+            const customInput = selectElement.parentElement.querySelector('input[type="text"]');
 
-            if (productSelect.value === "Other") {
-                customProduct.style.display = "block";
-                customProduct.required = true;
+            if (selectElement.value === "Other") {
+                customInput.style.display = "block";
+                customInput.required = true;
             } else {
-                customProduct.style.display = "none";
-                customProduct.required = false;
+                customInput.style.display = "none";
+                customInput.required = false;
             }
+        }
+
+        function addProduct() {
+            const container = document.getElementById("productContainer");
+            const productItem = document.createElement("div");
+            productItem.classList.add("product-item");
+
+            productItem.innerHTML = `
+                <select name="productName[]" onchange="toggleCustomInput(this)">
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="Register">Register</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                    <option value="Other">Other (Enter Below)</option>
+                </select>
+
+                <input type="text" name="customProductName[]" placeholder="Enter Custom Product Name" style="display: none;">
+
+                <input type="number" name="quantity[]" placeholder="Required Quantity" min="1" required>
+
+                <button type="button" class="remove-btn" onclick="removeProduct(this)">❌ Remove</button>
+            `;
+
+            container.appendChild(productItem);
+        }
+
+        function removeProduct(button) {
+            button.parentElement.remove();
         }
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
@@ -56,15 +147,6 @@
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-
-            // Handle both dropdown and custom input
-            const productSelect = document.getElementById("productSelect");
-            const customProduct = document.getElementById("customProduct");
-            if (productSelect.value === "Other") {
-                form.elements["Product Name"].value = customProduct.value;
-            } else {
-                form.elements["Product Name"].value = productSelect.value;
-            }
 
             const formData = new FormData(form);
 
@@ -76,7 +158,22 @@
             .then(result => {
                 alert("✅ Data submitted successfully!");
                 form.reset();
-                toggleCustomInput(); // Reset the custom input visibility
+                document.getElementById("productContainer").innerHTML = `
+                    <div class="product-item">
+                        <select name="productName[]" onchange="toggleCustomInput(this)">
+                            <option value="">Select Product</option>
+                            <option value="Role">Role</option>
+                            <option value="Marcopol">Marcopol</option>
+                            <option value="Cortton">Cortton</option>
+                            <option value="Register">Register</option>
+                            <option value="High Risk Consent">High Risk Consent</option>
+                            <option value="Other">Other (Enter Below)</option>
+                        </select>
+                        <input type="text" name="customProductName[]" placeholder="Enter Custom Product Name" style="display: none;">
+                        <input type="number" name="quantity[]" placeholder="Required Quantity" min="1" required>
+                        <button type="button" class="remove-btn" onclick="removeProduct(this)">❌ Remove</button>
+                    </div>
+                `;
             })
             .catch(error => {
                 console.error('❌ Error:', error);

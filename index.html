@@ -278,37 +278,38 @@
             });
         }
 
-        document.getElementById("stockForm").addEventListener("submit", function(event) {
+       document.getElementById("stockForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    document.getElementById("stockForm").addEventListener("submit", function(event) {
-  event.preventDefault();
-  const formData = {
-    receiverName: document.getElementById("receiverName").value,
-    supplierName: document.getElementById("supplierName").value,
-    supplierDateTime: document.getElementById("supplierDateTime").value,
-    dateTime: new Date().toLocaleString(),
-    stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
-      name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
-      quantity: item.querySelector('input[name="quantity[]"]').value
-    }))
-  };
+    const formData = {
+        receiverName: document.getElementById("receiverName").value,
+        supplierName: document.getElementById("supplierName").value,
+        supplierDateTime: document.getElementById("supplierDateTime").value,
+        dateTime: new Date().toLocaleString(),
+        stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
+            name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
+            quantity: item.querySelector('input[name="quantity[]"]').value
+        }))
+    };
 
-  console.log("Sending Data:", formData); // Debugging line
+    console.log("Form Data:", formData);  // Debugging ke liye
 
-  fetch("https://script.google.com/macros/s/AKfycbxpe_tnX28g4oHqaGrjk3UYNNMPhSHGer5bMQeR8hL-BS_mjj_ctkql2wMiRDGzJu5b/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData)
-})
-.then(response => response.text())  // Text me response le
-.then(data => {
-  console.log("Server Response:", data);
-  alert("✅ Data submitted successfully!\n" + data);
-})
-.catch(error => {
-  console.error("⚠️ Error:", error);
-  alert("❌ Submission failed! " + error.message);
+    fetch("https://script.google.com/macros/s/AKfycbxpe_tnX28g4oHqaGrjk3UYNNMPhSHGer5bMQeR8hL-BS_mjj_ctkql2wMiRDGzJu5b/exec", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.text())  // Response ko text mein check karna
+    .then(data => {
+        console.log("Server Response:", data);  // Server se aaya response
+        alert("✅ Data submitted successfully!");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("❌ Submission failed! " + error.message);
+    });
 });
 
 

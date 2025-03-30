@@ -16,24 +16,9 @@
 
     <script>
         document.getElementById('simpleForm').addEventListener('submit', function(e) {
-            e.preventDefault();  // Prevents form from reloading the page
-
+            e.preventDefault();
             const inputText = document.getElementById('inputText').value;
-
-            // Sending data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbzzBy09Ckvr2FBo0XzSj_AV8wCv26Q5E4fMvz-E_PS0VNmAESe295f31VXsf3QgNabx/exec', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: inputText })
-            })
-            .then(response => response.text())
-            .then(result => {
-                alert('Data Submitted: ' + result);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Submission failed!');
-            });
+            alert('You entered: ' + inputText);
         });
     </script>
 

@@ -279,36 +279,44 @@
         }
 
         document.getElementById("stockForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            document.getElementById("autoDateTime").value = new Date().toLocaleString();
+    document.getElementById("autoDateTime").value = new Date().toLocaleString();
 
-            const formData = {
-                receiverName: document.getElementById("receiverName").value,
-                supplierName: document.getElementById("supplierName").value,
-                supplierDateTime: document.getElementById("supplierDateTime").value,
-                dateTime: document.getElementById("autoDateTime").value,
-                stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
-                    name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
-                    quantity: item.querySelector('input[name="quantity[]"]').value
-                }))
-            };
+    const formData = {
+        receiverName: document.getElementById("receiverName").value,
+        supplierName: document.getElementById("supplierName").value,
+        supplierDateTime: document.getElementById("supplierDateTime").value,
+        dateTime: document.getElementById("autoDateTime").value,
+        stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
+            name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
+            quantity: item.querySelector('input[name="quantity[]"]').value
+        }))
+    };
 
-            fetch("https://script.google.com/macros/s/AKfycbxpe_tnX28g4oHqaGrjk3UYNNMPhSHGer5bMQeR8hL-BS_mjj_ctkql2wMiRDGzJu5b/exec", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert("Data submitted successfully!");
-                console.log(data);
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Submission failed!");
-            });
-        });
+    fetch("https://script.google.com/macros/s/AKfycbxpe_tnX28g4oHqaGrjk3UYNNMPhSHGer5bMQeR8hL-BS_mjj_ctkql2wMiRDGzJu5b/exec", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.message); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert("✅ Data submitted successfully!");
+        console.log(data);
+    })
+    .catch(error => {
+        console.error("⚠️ Error:", error);
+        alert("❌ Submission failed! " + error.message);
+    });
+});
+
 
         // Initial Date-Time Update
         document.getElementById("autoDateTime").value = new Date().toLocaleString();

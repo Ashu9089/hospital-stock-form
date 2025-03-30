@@ -17,20 +17,25 @@
 
             const name = document.getElementById('name').value;
 
-            fetch('https://script.google.com/macros/s/AKfycbyBdX8lfWVMpmjBJt1ClQiQVB0SPB0pDsNMoo9Ndf0r2vunZS2_O00TDqa3-WyUabCM/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbz-NUR7hCGcb-b9OO1YUy8APY8GHYWjEqOAAq4cGX0moil_ST9N-lPvLJMSmQ9CYpL5/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ name: name })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => { throw new Error(error.message); });
+                }
+                return response.json();
+            })
             .then(result => {
                 alert(result.message); // Show message from Google Script
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Submission failed!');
+                alert(`Submission failed! ${error.message}`);
             });
         });
     </script>

@@ -293,22 +293,22 @@
     };
 
     fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert("Data submitted successfully!");
-        console.log(data); // Check response in console
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("Submission failed!");
-    });
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"  // Important: JSON format me bhejna hai
+    },
+    body: JSON.stringify(formData)
+})
+.then(response => response.json())
+.then(data => {
+    alert("Data submitted successfully!");
+    console.log(data);
+})
+.catch(error => {
+    console.error("Error:", error);
+    alert("Submission failed!");
 });
+
 
 
 

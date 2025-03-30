@@ -26,7 +26,7 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
+            max-width: 800px;
             margin: 30px auto;
             transition: transform 0.3s ease-in-out;
         }
@@ -88,6 +88,8 @@
             color: white;
             cursor: pointer;
             border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
         }
 
         .remove-btn:hover {
@@ -127,6 +129,9 @@
         .customNameInput {
             display: block;
             width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #b0bec5;
         }
 
         .hidden {
@@ -234,7 +239,6 @@
             const stockItem = button.parentElement;
             stockContainer.removeChild(stockItem);
             updateDisabledOptions();
-            updateAvailability(null);
         }
 
         function updateAvailability(element) {
@@ -267,25 +271,49 @@
 
         function updateDisabledOptions() {
             const selectElements = document.querySelectorAll('select[name="stockName[]"]');
-            const selectedValues = Array.from(selectElements).map(sel => sel.value);
-
             selectElements.forEach(select => {
-                const options = select.options;
-                for (let option of options) {
-                    option.disabled = selectedValues.filter(val => val === option.value).length > 1;
-                }
+                const selectedValues = Array.from(selectElements)
+                    .map(sel => sel.value)
+                    .filter(val => val);
+
+                select.querySelectorAll('option').forEach(option => {
+                    option.disabled = selectedValues.includes(option.value) && select.value !== option.value;
+                });
             });
         }
 
         document.getElementById("stockForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            alert("✅ Form Submitted Successfully!");
+            document.getElementById("autoDateTime").value = new Date().toLocaleString();
+
+            const formData = {
+                receiverName: document.getElementById("receiverName").value,
+                supplierName: document.getElementById("supplierName").value,
+                supplierDateTime: document.getElementById("supplierDateTime").value,
+                dateTime: document.getElementById("autoDateTime").value,
+                stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
+                    name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
+                    quantity: item.querySelector('input[name="quantity[]"]').value
+                }))
+            };
+
+            fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("✅ Data submitted successfully!");
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("❌ Error:", error);
+                alert("Submission failed!");
+            });
         });
 
-        document.getElementById("supplierDateTime").addEventListener("input", function() {
-            const dateTime = new Date(this.value);
-            document.getElementById("autoDateTime").value = dateTime.toLocaleString();
-        });
+        document.getElementById("autoDateTime").value = new Date().toLocaleString();
     </script>
 </body>
 </html>

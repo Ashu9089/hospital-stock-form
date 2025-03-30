@@ -234,6 +234,7 @@
             const stockItem = button.parentElement;
             stockContainer.removeChild(stockItem);
             updateDisabledOptions();
+            updateAvailability(null);
         }
 
         function updateAvailability(element) {
@@ -247,10 +248,13 @@
                 customInput.classList.add('hidden');
                 const product = selectProduct.value;
                 let availableQty = availableQuantities[product];
-                let requiredQty = parseInt(requiredQtyInput.value) || 0;
 
-                availableQty = Math.max(availableQty - requiredQty, 0);
-                availableQuantities[product] = availableQty;
+                if (requiredQtyInput) {
+                    let requiredQty = parseInt(requiredQtyInput.value) || 0;
+                    availableQty -= requiredQty;
+                    if (availableQty < 0) availableQty = 0;
+                    availableQuantities[product] = availableQty;
+                }
 
                 availableLabel.textContent = `Available Quantity: ${availableQty}`;
             } else if (customInput) {
@@ -263,47 +267,51 @@
 
         function updateDisabledOptions() {
             const selectElements = document.querySelectorAll('select[name="stockName[]"]');
-            const selectedValues = Array.from(selectElements)
-                .map(sel => sel.value)
-                .filter(val => val);
-
             selectElements.forEach(select => {
+                const selectedValues = Array.from(selectElements)
+                    .map(sel => sel.value)
+                    .filter(val => val);
+
                 select.querySelectorAll('option').forEach(option => {
                     option.disabled = selectedValues.includes(option.value) && select.value !== option.value;
                 });
             });
         }
 
-        document.getElementById("stockForm").addEventListener("submit", function (event) {
+        document.getElementById("stockForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            const formData = new FormData(this);
-            fetch('https://script.google.com/macros/s/AKfycbw8t0p8Y7F7gWmV4cP1R2KJx8oD9w7x1cG1jA/exec', {
-                method: 'POST',
-                body: formData
+
+            document.getElementById("autoDateTime").value = new Date().toLocaleString();
+
+            const formData = {
+                receiverName: document.getElementById("receiverName").value,
+                supplierName: document.getElementById("supplierName").value,
+                supplierDateTime: document.getElementById("supplierDateTime").value,
+                dateTime: document.getElementById("autoDateTime").value,
+                stocks: Array.from(document.querySelectorAll('.stockItem')).map(item => ({
+                    name: item.querySelector('select[name="stockName[]"]').value || item.querySelector('.customNameInput').value,
+                    quantity: item.querySelector('input[name="quantity[]"]').value
+                }))
+            };
+
+            fetch("https://script.google.com/macros/s/AKfycbxUJ6F_YRz1wywz3H_Zl-oCVRfMp3iyZCt9S0fk6bAMLuRv3u1uEMhT-mQKAixRyDxP/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 alert("Data submitted successfully!");
                 console.log(data);
-                this.reset();
-                document.getElementById("autoDateTime").value = new Date().toLocaleString();
-                updateDisabledOptions();
             })
             .catch(error => {
                 console.error("Error:", error);
-                alert("Submission failed! Check console for details.");
+                alert("Submission failed!");
             });
         });
 
-        window.onload = function () {
-            document.getElementById("autoDateTime").value = new Date().toLocaleString();
-        };
+        // Initial Date-Time Update
+        document.getElementById("autoDateTime").value = new Date().toLocaleString();
     </script>
-
 </body>
 </html>

@@ -1,26 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Form</title>
-</head>
-<body>
+<form id="dataForm">
+    <input type="text" name="inputText" required>
+    <button type="submit">Submit</button>
+</form>
 
-    <h2>Simple Form</h2>
-    <form id="simpleForm">
-        <label for="inputText">Enter Text:</label>
-        <input type="text" id="inputText" name="inputText" required>
-        <button type="submit">Submit</button>
-    </form>
-
-    <script>
-        document.getElementById('simpleForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const inputText = document.getElementById('inputText').value;
-            alert('You entered: ' + inputText);
+<script>
+    document.getElementById('dataForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
         });
-    </script>
 
-</body>
-</html>
+        fetch('https://script.google.com/macros/s/AKfycbzzBy09Ckvr2FBo0XzSj_AV8wCv26Q5E4fMvz-E_PS0VNmAESe295f31VXsf3QgNabx/exec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.text())
+        .then(result => alert(result))
+        .catch(error => alert('Submission failed: ' + error));
+    });
+</script>

@@ -297,20 +297,23 @@
   console.log("Sending Data:", formData); // Debugging line
 
   fetch("https://script.google.com/macros/s/AKfycbxpe_tnX28g4oHqaGrjk3UYNNMPhSHGer5bMQeR8hL-BS_mjj_ctkql2wMiRDGzJu5b/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert("✅ Data submitted successfully!");
-    console.log(data);
-  })
-  .catch(error => {
-    console.error("⚠️ Error:", error);
-    alert("❌ Submission failed! " + error.message);
-  });
+  method: "POST",
+  headers: { 
+    "Content-Type": "application/json" 
+  },
+  body: JSON.stringify(formData),
+  mode: 'cors' // Add this line
+})
+.then(response => response.json())
+.then(data => {
+  alert("✅ Data submitted successfully!");
+  console.log(data);
+})
+.catch(error => {
+  console.error("⚠️ Error:", error);
+  alert("❌ Submission failed! " + error.message);
 });
+
 
 
         // Initial Date-Time Update

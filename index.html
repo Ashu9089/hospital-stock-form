@@ -294,21 +294,25 @@
                 }))
             };
 
-            fetch("https://script.google.com/macros/s/AKfycbyH179n80MYKFbdTxi14djgn1Lp-ambG9S3aQ1oKjsEK6s_BZA7WXWHb6qR4w0ULbih/exec", {
+           fetch("https://script.google.com/macros/s/AKfycbyH179n80MYKFbdTxi14djgn1Lp-ambG9S3aQ1oKjsEK6s_BZA7WXWHb6qR4w0ULbih/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData)
 })
-.then(response => response.json()
+.then(response => {
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    return response.json();
+})
 .then(data => {
     alert("Data submitted successfully!");
     console.log(data);
 })
 .catch(error => {
     console.error("Error:", error);
-    alert("Submission failed!");
+    alert("Submission failed! Check console for details.");
 });
-
 
         // Initial Date-Time Update
         document.getElementById("autoDateTime").value = new Date().toLocaleString();

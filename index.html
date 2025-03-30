@@ -39,27 +39,30 @@
                 supplierName: supplierName,
                 supplierDateTime: supplierDateTime,
                 dateTime: new Date().toLocaleString(),
-                stocks: [{ name: productName, quantity: quantity }],
-                productName: productName,
-                quantity: quantity
+                stocks: [{ name: productName, quantity: quantity }]
             };
 
-            // Replace with your actual Google Apps Script Web App URL
             const scriptURL = "https://script.google.com/macros/s/AKfycbzzBy09Ckvr2FBo0XzSj_AV8wCv26Q5E4fMvz-E_PS0VNmAESe295f31VXsf3QgNabx/exec";
 
             fetch(scriptURL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(formData)
             })
             .then(response => response.json())
             .then(data => {
-                alert("Data submitted successfully!");
+                if (data.result === "Success") {
+                    alert("✅ Data submitted successfully!");
+                } else {
+                    alert("❌ Submission failed: " + data.message);
+                }
                 console.log(data);
             })
             .catch(error => {
-                console.error("Error:", error);
-                alert("Submission failed!");
+                console.error("⚠️ Error:", error);
+                alert("Submission failed! Check console for details.");
             });
         }
     </script>

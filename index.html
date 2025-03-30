@@ -5,59 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Hospital Stock Entry Form</title>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #ffffff);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h2 {
-            text-align: center;
-            color: #00796b;
-            margin-bottom: 20px;
-        }
-        form {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-        }
-        .stockItem {
-            background: #f1f8e9;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        select, input {
-            padding: 10px;
-            border: 1px solid #00796b;
-            border-radius: 5px;
-            width: 100%;
-        }
-        .remove-btn, .add-btn, .submit-btn {
-            background: #00796b;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .remove-btn {
-            background: #d32f2f;
-        }
-        .remove-btn:hover, .add-btn:hover, .submit-btn:hover {
-            opacity: 0.9;
-        }
-        label {
-            font-weight: bold;
-        }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #e0f7fa, #ffffff); margin: 0; padding: 20px; color: #333; }
+        h2 { text-align: center; color: #00796b; margin-bottom: 20px; }
+        form { background: #ffffff; padding: 20px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); max-width: 600px; margin: auto; }
+        .stockItem { background: #f1f8e9; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+        select, input { padding: 10px; border: 1px solid #00796b; border-radius: 5px; width: 100%; }
+        .remove-btn, .add-btn, .submit-btn { background: #00796b; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .remove-btn { background: #d32f2f; }
+        .remove-btn:hover, .add-btn:hover, .submit-btn:hover { opacity: 0.9; }
+        label { font-weight: bold; }
     </style>
 </head>
 <body>
@@ -129,7 +85,7 @@
                 customInput.style.display = 'block';
             } else {
                 customInput.style.display = 'none';
-                customInput.value = '';  // Clear custom input if not needed
+                customInput.value = '';
             }
         }
 
@@ -142,11 +98,13 @@
             formData.append("Supplier Date & Time", document.getElementById("supplierDateTime").value);
 
             document.querySelectorAll('.stockItem').forEach((item, index) => {
-                const product = item.querySelector('select[name="Product Name"]').value;
-                const customProduct = item.querySelector('.customProduct').value || null;
-                const quantity = item.querySelector('input[name="Quantity"]').value;
+                const productSelect = item.querySelector('select[name="Product Name"]');
+                const customProduct = item.querySelector('.customProduct').value.trim();
+                const quantity = item.querySelector('input[name="Quantity"]').value.trim();
 
-                formData.append(`Product Name ${index + 1}`, product || customProduct || null);
+                // Save product name (either from list or custom)
+                const productName = productSelect.value || (customProduct ? customProduct : "N/A");
+                formData.append(`Product Name ${index + 1}`, productName);
                 formData.append(`Quantity ${index + 1}`, quantity);
             });
 

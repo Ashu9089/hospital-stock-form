@@ -298,16 +298,13 @@
 
   fetch("https://script.google.com/macros/s/AKfycbxpe_tnX28g4oHqaGrjk3UYNNMPhSHGer5bMQeR8hL-BS_mjj_ctkql2wMiRDGzJu5b/exec", {
   method: "POST",
-  headers: { 
-    "Content-Type": "application/json" 
-  },
-  body: JSON.stringify(formData),
-  mode: 'cors' // Add this line
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(formData)
 })
-.then(response => response.json())
+.then(response => response.text())  // Text me response le
 .then(data => {
-  alert("✅ Data submitted successfully!");
-  console.log(data);
+  console.log("Server Response:", data);
+  alert("✅ Data submitted successfully!\n" + data);
 })
 .catch(error => {
   console.error("⚠️ Error:", error);

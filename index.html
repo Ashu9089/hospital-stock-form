@@ -3,95 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏥 Hospital Stock Entry Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f4f8;
-            padding: 20px;
-            text-align: center;
-        }
-
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: auto;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            background: #00796b;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #004d40;
-        }
-    </style>
+    <title>Simple Form</title>
 </head>
 <body>
 
-    <h2>🏥 Hospital Stock Entry Form</h2>
-    <form id="dataForm">
-        <label>Receiver Name:</label>
-        <input type="text" name="receiverName" required>
-
-        <label>Supplier Name:</label>
-        <input type="text" name="supplierName" required>
-
-        <label>Supplier Date & Time:</label>
-        <input type="datetime-local" name="supplierDateTime" required>
-
-        <label>Product Name:</label>
-        <input type="text" name="productName" required>
-
-        <label>Quantity:</label>
-        <input type="number" name="quantity" required>
-
+    <h2>Simple Form</h2>
+    <form id="simpleForm">
+        <label for="inputText">Enter Text:</label>
+        <input type="text" id="inputText" name="inputText" required>
         <button type="submit">Submit</button>
     </form>
 
     <script>
-        document.getElementById('dataForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.getElementById('simpleForm').addEventListener('submit', function(e) {
+            e.preventDefault();  // Prevents form from reloading the page
 
-            const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
+            const inputText = document.getElementById('inputText').value;
 
+            // Sending data to Google Apps Script
             fetch('https://script.google.com/macros/s/AKfycbzzBy09Ckvr2FBo0XzSj_AV8wCv26Q5E4fMvz-E_PS0VNmAESe295f31VXsf3QgNabx/exec', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: inputText })
             })
             .then(response => response.text())
             .then(result => {
-                alert(result);
+                alert('Data Submitted: ' + result);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -99,5 +36,6 @@
             });
         });
     </script>
+
 </body>
 </html>

@@ -2,19 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Hospital Stock Entry Form</title>
 </head>
 <body>
     <h2>🏥 Hospital Stock Entry Form</h2>
+
     <form id="stockForm">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="Product Name" placeholder="Enter Product Name" required>
+
         <label for="receiverName">Receiver Name:</label>
-        <input type="text" id="receiverName" name="receiverName" required>
+        <input type="text" id="receiverName" name="Receiver Name" placeholder="Enter Receiver Name" required>
 
         <label for="supplierName">Supplier Name:</label>
-        <input type="text" id="supplierName" name="supplierName" required>
+        <input type="text" id="supplierName" name="Supplier Name" placeholder="Enter Supplier Name" required>
 
         <label for="supplierDateTime">Supplier Date & Time:</label>
-        <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
+        <input type="datetime-local" id="supplierDateTime" name="Supplier Date & Time" required>
 
         <button type="submit">Submit</button>
     </form>
@@ -23,8 +28,8 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
         const form = document.getElementById('stockForm');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent default form submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
 
             const formData = new FormData(form);
 
@@ -32,13 +37,13 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(result => {
-                alert("✅ Form Submitted Successfully!");
-                form.reset(); // Reset form after submission
+                alert("✅ Data submitted successfully!");
+                form.reset();
             })
             .catch(error => {
-                console.error('❌ Error:', error.message);
+                console.error('❌ Error:', error);
                 alert('Submission failed!');
             });
         });

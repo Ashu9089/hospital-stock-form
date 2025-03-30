@@ -102,7 +102,6 @@
                 const customProduct = item.querySelector('.customProduct').value.trim();
                 const quantity = item.querySelector('input[name="Quantity"]').value.trim();
 
-                // Save product name (either from list or custom)
                 const productName = productSelect.value || (customProduct ? customProduct : "N/A");
                 formData.append(`Product Name ${index + 1}`, productName);
                 formData.append(`Quantity ${index + 1}`, quantity);

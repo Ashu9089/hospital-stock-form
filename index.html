@@ -1,101 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>🏥 Hospital Stock Entry Form</title>
-</head>
-<body>
-    <h2>🏥 Hospital Stock Entry Form</h2>
-    <form id="stockForm">
-        <label for="receiverName">Receiver Name:</label>
-        <input type="text" id="receiverName" name="receiverName" required><br><br>
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
+    const form = document.getElementById('stockForm');
 
-        <label for="supplierName">Supplier Name:</label>
-        <input type="text" id="supplierName" name="supplierName" required><br><br>
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-        <label for="supplierDateTime">Supplier Date & Time:</label>
-        <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required><br><br>
+        const formData = new FormData(form);
+        const jsonData = {};
 
-        <div id="productsContainer">
-            <div class="productItem">
-                <label>Product Name:</label>
-                <input type="text" name="productName" placeholder="Enter Product Name" required>
-
-                <label>Quantity:</label>
-                <input type="number" name="quantity" placeholder="Enter Quantity" required>
-
-                <button type="button" onclick="removeProduct(this)">❌ Remove</button>
-            </div>
-        </div>
-
-        <button type="button" onclick="addProduct()">➕ Add Another Product</button><br><br>
-
-        <button type="submit">Submit</button>
-    </form>
-
-    <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxDR6cM2Mey4AXIQKwL4fXNfG7t3K1Qj8HX2EMtDVEY9BK-YM3DY8dFvYRBGHRNY-xH/exec';
-        const form = document.getElementById('stockForm');
-
-        function addProduct() {
-            const container = document.getElementById('productsContainer');
-            const productItem = document.createElement('div');
-            productItem.classList.add('productItem');
-            productItem.innerHTML = `
-                <label>Product Name:</label>
-                <input type="text" name="productName" placeholder="Enter Product Name" required>
-                <label>Quantity:</label>
-                <input type="number" name="quantity" placeholder="Enter Quantity" required>
-                <button type="button" onclick="removeProduct(this)">❌ Remove</button>
-            `;
-            container.appendChild(productItem);
-        }
-
-        function removeProduct(button) {
-            button.parentElement.remove();
-        }
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const receiverName = document.getElementById('receiverName').value;
-            const supplierName = document.getElementById('supplierName').value;
-            const supplierDateTime = document.getElementById('supplierDateTime').value;
-
-            const products = Array.from(document.querySelectorAll('.productItem')).map(item => ({
-                productName: item.querySelector('input[name="productName"]').value,
-                quantity: item.querySelector('input[name="quantity"]').value
-            }));
-
-            const data = {
-                receiverName,
-                supplierName,
-                supplierDateTime,
-                products
-            };
-
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.result === 'success') {
-                    alert('✅ Data submitted successfully!');
-                    form.reset();
-                    document.getElementById('productsContainer').innerHTML = '';
-                } else {
-                    alert('❌ Submission failed!');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('❌ Submission failed!');
-            });
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
         });
-    </script>
-</body>
-</html>
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.result === 'success') {
+                alert("✅ Data submitted successfully!");
+                form.reset();
+            } else {
+                alert("❌ Submission failed!");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Submission failed!');
+        });
+    });
+</script>

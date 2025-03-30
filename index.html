@@ -102,7 +102,6 @@
         const form = document.getElementById('stockForm');
         const stockContainer = document.getElementById("stockContainer");
 
-        // Add another product
         function addStock() {
             const stockItem = document.createElement("div");
             stockItem.classList.add("stockItem");
@@ -122,35 +121,19 @@
             stockContainer.appendChild(stockItem);
         }
 
-        // Remove product
         function removeStock(button) {
             button.parentElement.remove();
         }
 
-        // Toggle custom product field
         function toggleCustomField(selectElement) {
             const customField = selectElement.nextElementSibling;
-            if (selectElement.value === '') {
-                customField.style.display = 'block';
-            } else {
-                customField.style.display = 'none';
-            }
+            customField.style.display = selectElement.value === '' ? 'block' : 'none';
         }
 
-        // Submit form data
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const receiverName = document.getElementById('receiverName').value;
-            const supplierName = document.getElementById('supplierName').value;
-            const supplierDateTime = document.getElementById('supplierDateTime').value;
-
             const formData = new FormData(form);
-
-            // Add common data to the formData
-            formData.append('Receiver Name', receiverName);
-            formData.append('Supplier Name', supplierName);
-            formData.append('Supplier Date & Time', supplierDateTime);
 
             fetch(scriptURL, {
                 method: 'POST',

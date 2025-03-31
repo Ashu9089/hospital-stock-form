@@ -259,4 +259,14 @@
             .then(result => {
                 alert(result.result === "success" ? "✅ Data Saved Successfully!" : "❌ Submission Failed.");
                 if (result.result === "success") {
-                    document.getElementById("stockForm
+                    document.getElementById("stockForm").reset();
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("❌ Error submitting the form.");
+            });
+        });
+    </script>
+</body>
+</html>

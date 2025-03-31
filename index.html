@@ -217,20 +217,12 @@
         function removeStock(button) {
             const stockContainer = document.getElementById("stockContainer");
             const stockItem = button.parentElement;
-            const selectedProduct = stockItem.querySelector('select[name="stockName[]"]').value;
-            if (selectedProduct) {
-                availableQuantities[selectedProduct] += parseInt(stockItem.querySelector('input[name="quantity[]"]').value) || 0;
-            }
             stockContainer.removeChild(stockItem);
             updateAvailability();
         }
 
         function updateAvailability(element) {
             const stockItems = document.querySelectorAll('.stockItem');
-
-            const selectedProducts = Array.from(document.querySelectorAll('select[name="stockName[]"]'))
-                .map(select => select.value)
-                .filter(val => val);
 
             stockItems.forEach(item => {
                 const selectProduct = item.querySelector('select[name="stockName[]"]');
@@ -239,14 +231,8 @@
                 const availableLabel = item.querySelector('.availableQuantity');
                 const product = selectProduct.value;
 
-                // Disable already selected products
-                const options = selectProduct.querySelectorAll('option');
-                options.forEach(option => {
-                    option.disabled = selectedProducts.includes(option.value) && option.value !== product;
-                });
-
                 if (product) {
-                    customInput.classList.add('hidden'); 
+                    customInput.classList.add('hidden');
                     let availableQty = availableQuantities[product];
                     const requiredQty = parseInt(requiredQtyInput.value) || 0;
                     availableQty = availableQty - requiredQty;
@@ -261,8 +247,16 @@
 
         document.getElementById("stockForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            alert("✅ Form Submitted Successfully!");
-        });
-    </script>
-</body>
-</html>
+
+            const formData = new FormData(event.target);
+            const scriptUrl = "https://script.google.com/macros/s/your_script_id/exec"; // Replace with your Google Apps Script URL
+
+            fetch(scriptUrl, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.result === "success" ? "✅ Data Saved Successfully!" : "❌ Submission Failed.");
+                if (result.result === "success") {
+                    document.getElementById("stockForm

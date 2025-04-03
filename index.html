@@ -160,7 +160,7 @@
                     <option value="High Risk Consent">High Risk Consent</option>
                     <option value="Other">Other</option>
                 </select>
-                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput hidden">
+                <input type="text" name="customStockName[]" placeholder="Enter Custom Product Name" class="customNameInput hidden">
                 <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
                 <label class="availableQuantity">Available Quantity: 0</label>
                 <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
@@ -169,16 +169,15 @@
 
         <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
 
+        <!-- Venue Dropdown below Add Product Button -->
         <label for="venue">Venue:</label>
         <select id="venue" name="venue" onchange="toggleOtherVenueInput()" required>
             <option value="">Select Venue</option>
             <option value="ICU">ICU</option>
             <option value="CTVS">CTVS</option>
             <option value="General Ward">General Ward</option>
-            <option value="Custom Venue Name">Custom Venue Name</option>
+            <option value="Other">Other</option>
         </select>
-
-        <!-- Custom Venue Input Box -->
         <input type="text" id="otherVenue" name="otherVenue" placeholder="Enter Custom Venue" class="hidden">
 
         <label for="receiverName">Receiver Name:</label>
@@ -194,47 +193,6 @@
     </form>
 
     <script>
-        const availableQuantities = {
-            "Role": 100,
-            "Marcopol": 50,
-            "Cortton": 30,
-            "Register": 75,
-            "High Risk Consent": 20
-        };
-
-        function addStock() {
-            const stockContainer = document.getElementById("stockContainer");
-            const stockItemCount = stockContainer.children.length + 1;
-
-            const stockItem = document.createElement("div");
-            stockItem.classList.add("stockItem");
-            stockItem.innerHTML = `
-                <div class="serial-number">${stockItemCount}</div>
-                <select name="stockName[]" onchange="updateAvailability(this)" required>
-                    <option value="">Select Product</option>
-                    <option value="Role">Role</option>
-                    <option value="Marcopol">Marcopol</option>
-                    <option value="Cortton">Cortton</option>
-                    <option value="Register">Register</option>
-                    <option value="High Risk Consent">High Risk Consent</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput hidden">
-                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
-                <label class="availableQuantity">Available Quantity: 0</label>
-                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
-            `;
-
-            stockContainer.appendChild(stockItem);
-        }
-
-        function removeStock(button) {
-            const stockContainer = document.getElementById("stockContainer");
-            const stockItem = button.parentElement;
-            stockContainer.removeChild(stockItem);
-            updateAvailability();
-        }
-
         function updateAvailability(element) {
             const stockItems = document.querySelectorAll('.stockItem');
 
@@ -250,27 +208,46 @@
                 } else {
                     customInput.classList.add('hidden');
                 }
-
-                if (product) {
-                    let availableQty = availableQuantities[product];
-                    const requiredQty = parseInt(requiredQtyInput.value) || 0;
-                    availableQty = availableQty - requiredQty;
-                    availableQuantities[product] = availableQty;
-                    availableLabel.textContent = `Available Quantity: ${availableQty}`;
-                } else {
-                    availableLabel.textContent = `Available Quantity: 0`;
-                }
             });
         }
 
         function toggleOtherVenueInput() {
             const venueSelect = document.getElementById('venue');
             const otherVenueInput = document.getElementById('otherVenue');
-            if (venueSelect.value === "Custom Venue Name") {
+            if (venueSelect.value === "Other") {
                 otherVenueInput.classList.remove('hidden');
             } else {
                 otherVenueInput.classList.add('hidden');
             }
+        }
+
+        function addStock() {
+            const stockContainer = document.getElementById('stockContainer');
+            const stockItemCount = stockContainer.getElementsByClassName('stockItem').length + 1;
+
+            const stockItem = document.createElement('div');
+            stockItem.classList.add('stockItem');
+            stockItem.innerHTML = `
+                <div class="serial-number">${stockItemCount}</div>
+                <select name="stockName[]" onchange="updateAvailability(this)" required>
+                    <option value="">Select Product</option>
+                    <option value="Role">Role</option>
+                    <option value="Marcopol">Marcopol</option>
+                    <option value="Cortton">Cortton</option>
+                    <option value="Register">Register</option>
+                    <option value="High Risk Consent">High Risk Consent</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" name="customStockName[]" placeholder="Enter Custom Product Name" class="customNameInput hidden">
+                <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
+                <label class="availableQuantity">Available Quantity: 0</label>
+                <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+            `;
+            stockContainer.appendChild(stockItem);
+        }
+
+        function removeStock(button) {
+            button.parentElement.remove();
         }
 
         document.getElementById("stockForm").addEventListener("submit", function(event) {
@@ -281,11 +258,12 @@
 
             let stockNames = formData.getAll("stockName[]");
             let quantities = formData.getAll("quantity[]");
+            let customStockNames = formData.getAll("customStockName[]");
 
             for (let i = 0; i < stockNames.length; i++) {
                 formObject.stockItems.push({
-                    stockName: stockNames[i],
-                    quantity: quantities[i]
+                    stockName: stockNames[i] === "Other" ? customStockNames[i] : stockNames[i],
+                    quantity: quantities[i] || "0"
                 });
             }
 
@@ -295,17 +273,25 @@
             formObject.venue = formData.get("venue");
             formObject.otherVenue = formData.get("otherVenue");
 
-            fetch('https://script.google.com/macros/s/AKfycbyklQMNy6CmWLtTuREI4wMMcM9YvPgKwdql0jgG1jkc0OoLGadcKaBO047lopt4DojO/exec', {
-                method: 'POST',
+            console.log("🔹 Sending Data:", JSON.stringify(formObject));
+
+            fetch("https://script.google.com/macros/s/AKfycbzM__q5LrXez6aOBpIE-L7ZzG3gnf-BATONL7XGWef-ourZooNUhX2nw7zW5MIjhjOS/exec", {
+                method: "POST",
+                mode: "no-cors", 
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(formObject)
-            }).then(response => response.json())
-            .then(data => {
-                alert('Data successfully submitted!');
-                event.target.reset();
+            })
+            .then(response => response.text())
+            .then(result => {
+                console.log("🔹 Response Text:", result);
+                alert("✅ Form Submitted Successfully!");
+                document.getElementById("stockForm").reset();
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Something went wrong!');
+                console.error("❌ Fetch Error:", error);
+                alert("❌ Error submitting the form: " + error.message);
             });
         });
     </script>

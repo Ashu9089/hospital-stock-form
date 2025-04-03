@@ -158,6 +158,7 @@
                     <option value="Cortton">Cortton</option>
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
+                    <option value="Other">Other</option>
                 </select>
                 <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput hidden">
                 <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
@@ -167,6 +168,18 @@
         </div>
 
         <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
+
+        <label for="venue">Venue:</label>
+        <select id="venue" name="venue" onchange="toggleOtherVenueInput()" required>
+            <option value="">Select Venue</option>
+            <option value="ICU">ICU</option>
+            <option value="CTVS">CTVS</option>
+            <option value="General Ward">General Ward</option>
+            <option value="Custom Venue Name">Custom Venue Name</option>
+        </select>
+
+        <!-- Custom Venue Input Box -->
+        <input type="text" id="otherVenue" name="otherVenue" placeholder="Enter Custom Venue" class="hidden">
 
         <label for="receiverName">Receiver Name:</label>
         <input type="text" id="receiverName" name="receiverName" placeholder="Enter Receiver Name" required>
@@ -204,6 +217,7 @@
                     <option value="Cortton">Cortton</option>
                     <option value="Register">Register</option>
                     <option value="High Risk Consent">High Risk Consent</option>
+                    <option value="Other">Other</option>
                 </select>
                 <input type="text" name="customStockName[]" placeholder="Or Enter Custom Name" class="customNameInput hidden">
                 <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
@@ -231,68 +245,69 @@
                 const availableLabel = item.querySelector('.availableQuantity');
                 const product = selectProduct.value;
 
-                if (product) {
+                if (product === "Other") {
+                    customInput.classList.remove('hidden');
+                } else {
                     customInput.classList.add('hidden');
+                }
+
+                if (product) {
                     let availableQty = availableQuantities[product];
                     const requiredQty = parseInt(requiredQtyInput.value) || 0;
                     availableQty = availableQty - requiredQty;
                     availableQuantities[product] = availableQty;
                     availableLabel.textContent = `Available Quantity: ${availableQty}`;
                 } else {
-                    customInput.classList.remove('hidden');
                     availableLabel.textContent = `Available Quantity: 0`;
                 }
             });
         }
 
-     document.getElementById("stockForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+        function toggleOtherVenueInput() {
+            const venueSelect = document.getElementById('venue');
+            const otherVenueInput = document.getElementById('otherVenue');
+            if (venueSelect.value === "Custom Venue Name") {
+                otherVenueInput.classList.remove('hidden');
+            } else {
+                otherVenueInput.classList.add('hidden');
+            }
+        }
 
-    let formData = new FormData(event.target);
-    let formObject = { stockItems: [] };
+        document.getElementById("stockForm").addEventListener("submit", function(event) {
+            event.preventDefault();
 
-    let stockNames = formData.getAll("stockName[]");
-    let quantities = formData.getAll("quantity[]");
+            let formData = new FormData(event.target);
+            let formObject = { stockItems: [] };
 
-    for (let i = 0; i < stockNames.length; i++) {
-        formObject.stockItems.push({
-            stockName: stockNames[i],
-            quantity: quantities[i] || "0"
+            let stockNames = formData.getAll("stockName[]");
+            let quantities = formData.getAll("quantity[]");
+
+            for (let i = 0; i < stockNames.length; i++) {
+                formObject.stockItems.push({
+                    stockName: stockNames[i],
+                    quantity: quantities[i]
+                });
+            }
+
+            formObject.receiverName = formData.get("receiverName");
+            formObject.supplierName = formData.get("supplierName");
+            formObject.supplierDateTime = formData.get("supplierDateTime");
+            formObject.venue = formData.get("venue");
+            formObject.otherVenue = formData.get("otherVenue");
+
+            fetch('https://script.google.com/macros/s/AKfycbyklQMNy6CmWLtTuREI4wMMcM9YvPgKwdql0jgG1jkc0OoLGadcKaBO047lopt4DojO/exec', {
+                method: 'POST',
+                body: JSON.stringify(formObject)
+            }).then(response => response.json())
+            .then(data => {
+                alert('Data successfully submitted!');
+                event.target.reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            });
         });
-    }
-
-    formObject.receiverName = formData.get("receiverName");
-    formObject.supplierName = formData.get("supplierName");
-    formObject.supplierDateTime = formData.get("supplierDateTime");
-
-    console.log("🔹 Sending Data:", JSON.stringify(formObject));
-
-    fetch("https://script.google.com/macros/s/AKfycby1YxeiE7fgJwADeiKt7D__18-vz-Hh2yO41oZf1lmhNPIexsLamtaJ5Cdbu6UPoS8u/exec", {
-        method: "POST",
-        mode: "no-cors", // CORS issue avoid karne ke liye
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formObject)
-    })
-    .then(response => {
-        console.log("🔹 Raw Response:", response);
-        return response.text(); // JSON se pehle text format me dekhna
-    })
-    .then(result => {
-        console.log("🔹 Response Text:", result);
-        alert("✅ Form Submitted Successfully!");
-        document.getElementById("stockForm").reset();
-    })
-    .catch(error => {
-        console.error("❌ Fetch Error:", error);
-        alert("❌ Error submitting the form: " + error.message);
-    });
-});
-
-
-
-
     </script>
 </body>
 </html>

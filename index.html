@@ -1,291 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏥 Hospital Stock Entry Form</title>
-    <style>
-        /* YOUR CSS (unchanged) */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #ffffff);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h2 {
-            text-align: center;
-            color: #00796b;
-            margin-bottom: 20px;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        form {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 30px auto;
-            transition: transform 0.3s ease-in-out;
-            border: 2px solid #00796b;
-        }
-        .stockItem {
-            background: #f1f8e9;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            border: 1px solid #b0bec5;
-        }
-        .serial-number {
-            font-weight: bold;
-            background: #00796b;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            min-width: 40px;
-            text-align: center;
-            font-size: 16px;
-        }
-        .stockItem select,
-        .stockItem input,
-        .remove-btn,
-        .add-btn {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #b0bec5;
-            outline: none;
-            min-width: 150px;
-            transition: all 0.3s ease;
-        }
-        .remove-btn {
-            background: #d32f2f;
-            color: white;
-            cursor: pointer;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-        }
-        .remove-btn:hover {
-            background: #b71c1c;
-        }
-        .add-btn {
-            background: #00796b;
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin: 15px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .add-btn:hover {
-            background: #004d40;
-            transform: scale(1.02);
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 10px 0 6px;
-            color: #00796b;
-        }
-        input[type="text"],
-        input[type="datetime-local"],
-        select {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #b0bec5;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
-            background: #e0f2f1;
-            color: #00796b;
-            font-size: 14px;
-        }
-        input:focus,
-        select:focus {
-            border-color: #00796b;
-            box-shadow: 0 0 8px rgba(0, 121, 107, 0.4);
-            background: #ffffff;
-        }
-        .availableQuantity {
-            font-weight: bold;
-            color: #00796b;
-            margin-top: 5px;
-        }
-        .hidden {
-            display: none;
-        }
-        @media (max-width: 600px) {
-            form {
-                padding: 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🏥 Hospital Stock Entry Form</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      color: #00796b;
+      margin-bottom: 20px;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    form {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 30px auto;
+      border: 2px solid #00796b;
+    }
+    .stockItem {
+      background: #f1f8e9;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      border: 1px solid #b0bec5;
+    }
+    .serial-number {
+      font-weight: bold;
+      background: #00796b;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      min-width: 40px;
+      text-align: center;
+      font-size: 16px;
+    }
+    select,
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"] {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #b0bec5;
+      width: 100%;
+      background: #e0f2f1;
+      color: #00796b;
+      font-size: 14px;
+    }
+    input[name="quantity[]"] {
+      max-width: 120px;
+    }
+    input:focus,
+    select:focus {
+      border-color: #00796b;
+      box-shadow: 0 0 8px rgba(0, 121, 107, 0.4);
+      background: #ffffff;
+    }
+    .availableQuantity {
+      font-weight: bold;
+      color: #00796b;
+      margin-top: 5px;
+      flex-basis: 100%;
+    }
+    .remove-btn {
+      background: #d32f2f;
+      color: white;
+      cursor: pointer;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+    }
+    .remove-btn:hover {
+      background: #b71c1c;
+    }
+    .add-btn,
+    button[type="submit"] {
+      background: #00796b;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      margin: 15px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .add-btn:hover,
+    button[type="submit"]:hover {
+      background: #004d40;
+      transform: scale(1.02);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 10px 0 6px;
+      color: #00796b;
+    }
+    .hidden {
+      display: none;
+    }
+    #lottieContainer {
+      display: none;
+      text-align: center;
+      margin-top: 40px;
+    }
+    @media (max-width: 600px) {
+      form {
+        padding: 20px;
+      }
+      .stockItem {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <h2>🏥 Hospital Stock Entry Form</h2>
 
 <form id="stockForm">
-    <div id="stockContainer">
-        <!-- First Stock Item -->
-        <div class="stockItem">
-            <div class="serial-number">1</div>
-            <select name="stockName[]" onchange="updateAvailability(this)" required></select>
-            <input type="text" name="customStockName[]" placeholder="Enter Custom Product Name" class="customNameInput hidden">
-            <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
-            <label class="availableQuantity">Available Quantity: 0</label>
-            <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
-        </div>
+  <div id="stockContainer">
+    <div class="stockItem">
+      <div class="serial-number">1</div>
+      <select name="stockName[]" onchange="updateAvailability(this)" required></select>
+      <input type="text" name="customStockName[]" placeholder="Enter Custom Product Name" class="customNameInput hidden">
+      <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
+      <label class="availableQuantity">Available Quantity: 0</label>
+      <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
     </div>
+  </div>
 
-    <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
+  <button type="button" class="add-btn" onclick="addStock()">➕ Add Another Product</button>
 
-    <label for="venue">Venue:</label>
-    <select id="venue" name="venue" onchange="toggleOtherVenueInput()" required>
-        <option value="">Select Venue</option>
-        <option value="ICU">ICU</option>
-        <option value="CTVS">CTVS</option>
-        <option value="PRIVATE">PRIVATE</option>
-        <option value="NICU">NICU</option>
-        <option value="EMARGENCY">EMARGENCY</option>
-        <option value="ICU(EMR)">ICU(EMR)</option>
-        <option value="POST OP">POST OP</option>
-        <option value="OT">OT</option>
-        <option value="GENERAL WARD">GENERAL WARD</option>
-        <option value="DIALYSIS">DIALYSIS</option>
-        <option value="Other">Other</option>
-    </select>
-    <input type="text" id="otherVenue" name="otherVenue" placeholder="Enter Custom Venue" class="hidden">
+  <label for="venue">Venue:</label>
+  <select id="venue" name="venue" onchange="toggleOtherVenueInput()" required>
+    <option value="">Select Venue</option>
+    <option value="ICU">ICU</option>
+    <option value="CTVS">CTVS</option>
+    <option value="PRIVATE">PRIVATE</option>
+    <option value="NICU">NICU</option>
+    <option value="EMARGENCY">EMARGENCY</option>
+    <option value="ICU(EMR)">ICU(EMR)</option>
+    <option value="POST OP">POST OP</option>
+    <option value="OT">OT</option>
+    <option value="GENERAL WARD">GENERAL WARD</option>
+    <option value="DIALYSIS">DIALYSIS</option>
+    <option value="Other">Other</option>
+  </select>
+  <input type="text" id="otherVenue" name="otherVenue" placeholder="Enter Custom Venue" class="hidden">
 
-    <label for="receiverName">Receiver Name:</label>
-    <input type="text" id="receiverName" name="receiverName" placeholder="Enter Receiver Name" required>
+  <label for="receiverName">Receiver Name:</label>
+  <input type="text" id="receiverName" name="receiverName" required>
 
-    <label for="supplierName">Supplier Name:</label>
-    <input type="text" id="supplierName" name="supplierName" placeholder="Enter Supplier Name" required>
+  <label for="supplierName">Supplier Name:</label>
+  <input type="text" id="supplierName" name="supplierName" required>
 
-    <label for="supplierDateTime">Supplier Date & Time:</label>
-    <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
+  <label for="supplierDateTime">Supplier Date & Time:</label>
+  <input type="datetime-local" id="supplierDateTime" name="supplierDateTime" required>
 
-    <button type="submit" class="add-btn">Submit</button>
+  <button type="submit">Submit</button>
 </form>
 
+<div id="lottieContainer">
+  <lottie-player
+    src="https://assets10.lottiefiles.com/packages/lf20_jbrw3hcz.json"
+    background="transparent"
+    speed="1"
+    style="width: 300px; height: 300px;"
+    autoplay
+  ></lottie-player>
+  <h3 style="color: #00796b;">Submission Successful!</h3>
+</div>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <script>
-    let productData = [];
+  let productData = [];
 
-    // Fetch product list from Google Sheet
-    fetch("https://script.google.com/macros/s/AKfycbw2LEQS-2eWOzoBrAffxXe1LQn5Jaayl1fZknm25KJ8E3iQA9PvOuoFSlwwsjLDrOTd/exec")
-        .then(res => res.json())
-        .then(data => {
-            productData = data;
-            populateProductDropdowns();
-        });
+  async function fetchProductData() {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbw2LEQS-2eWOzoBrAffxXe1LQn5Jaayl1fZknm25KJ8E3iQA9PvOuoFSlwwsjLDrOTd/exec");
+    productData = await res.json();
+    const firstSelect = document.querySelector('select[name="stockName[]"]');
+    populateSingleDropdown(firstSelect);
+  }
 
-    function populateProductDropdowns() {
-        const selects = document.querySelectorAll('select[name="stockName[]"]');
-        selects.forEach(select => {
-            select.innerHTML = `<option value="">Select Product</option>`;
-            productData.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.name;
-                option.textContent = `${item.name} (Available: ${item.quantity})`;
-                select.appendChild(option);
-            });
-            select.innerHTML += `<option value="Other">Other</option>`;
-        });
-    }
-
-    function updateAvailability(selectElement) {
-        const selectedProduct = selectElement.value;
-        const stockItem = selectElement.closest('.stockItem');
-        const label = stockItem.querySelector('.availableQuantity');
-        const customInput = stockItem.querySelector('.customNameInput');
-
-        if (selectedProduct === "Other") {
-            customInput.classList.remove('hidden');
-            label.textContent = "Available Quantity: N/A";
-        } else {
-            customInput.classList.add('hidden');
-            const match = productData.find(p => p.name === selectedProduct);
-            label.textContent = `Available Quantity: ${match ? match.quantity : 0}`;
-        }
-    }
-
-    function toggleOtherVenueInput() {
-        const venueSelect = document.getElementById('venue');
-        const otherVenueInput = document.getElementById('otherVenue');
-        if (venueSelect.value === "Other") {
-            otherVenueInput.classList.remove('hidden');
-        } else {
-            otherVenueInput.classList.add('hidden');
-        }
-    }
-
-    function addStock() {
-        const stockContainer = document.getElementById('stockContainer');
-        const count = stockContainer.getElementsByClassName('stockItem').length + 1;
-        const stockItem = document.createElement('div');
-        stockItem.classList.add('stockItem');
-        stockItem.innerHTML = `
-            <div class="serial-number">${count}</div>
-            <select name="stockName[]" onchange="updateAvailability(this)" required></select>
-            <input type="text" name="customStockName[]" placeholder="Enter Custom Product Name" class="customNameInput hidden">
-            <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
-            <label class="availableQuantity">Available Quantity: 0</label>
-            <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
-        `;
-        stockContainer.appendChild(stockItem);
-        populateProductDropdowns();
-    }
-
-    function removeStock(button) {
-        button.parentElement.remove();
-    }
-
-    document.getElementById("stockForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        let formData = new FormData(event.target);
-        let formObject = { stockItems: [] };
-
-        let stockNames = formData.getAll("stockName[]");
-        let quantities = formData.getAll("quantity[]");
-        let customStockNames = formData.getAll("customStockName[]");
-
-        for (let i = 0; i < stockNames.length; i++) {
-            formObject.stockItems.push({
-                stockName: stockNames[i] === "Other" ? customStockNames[i] : stockNames[i],
-                quantity: quantities[i] || "0"
-            });
-        }
-
-        formObject.receiverName = formData.get("receiverName");
-        formObject.supplierName = formData.get("supplierName");
-        formObject.supplierDateTime = formData.get("supplierDateTime");
-        formObject.venue = formData.get("venue");
-        formObject.otherVenue = formData.get("otherVenue");
-
-        fetch("https://script.google.com/macros/s/AKfycbw2LEQS-2eWOzoBrAffxXe1LQn5Jaayl1fZknm25KJ8E3iQA9PvOuoFSlwwsjLDrOTd/exec", {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formObject)
-        })
-        .then(() => {
-            alert("✅ Form Submitted Successfully!");
-            document.getElementById("stockForm").reset();
-        })
-        .catch(error => {
-            alert("❌ Error submitting the form: " + error.message);
-        });
+  function populateSingleDropdown(select) {
+    select.innerHTML = `<option value="">Select Product</option>`;
+    productData.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.name;
+      option.textContent = `${item.name} (Available: ${item.quantity})`;
+      select.appendChild(option);
     });
+    select.innerHTML += `<option value="Other">Other</option>`;
+  }
+
+  function updateAvailability(selectElement) {
+    const selectedProduct = selectElement.value;
+    const stockItem = selectElement.closest('.stockItem');
+    const label = stockItem.querySelector('.availableQuantity');
+    const customInput = stockItem.querySelector('.customNameInput');
+    if (selectedProduct === "Other") {
+      customInput.classList.remove('hidden');
+      label.textContent = "Available Quantity: N/A";
+    } else {
+      customInput.classList.add('hidden');
+      const match = productData.find(p => p.name === selectedProduct);
+      label.textContent = `Available Quantity: ${match ? match.quantity : 0}`;
+    }
+  }
+
+  function toggleOtherVenueInput() {
+    const venueSelect = document.getElementById('venue');
+    const otherVenueInput = document.getElementById('otherVenue');
+    otherVenueInput.classList.toggle('hidden', venueSelect.value !== "Other");
+  }
+
+  function addStock() {
+    const stockContainer = document.getElementById('stockContainer');
+    const count = stockContainer.getElementsByClassName('stockItem').length + 1;
+    const stockItem = document.createElement('div');
+    stockItem.classList.add('stockItem');
+    stockItem.innerHTML = `
+      <div class="serial-number">${count}</div>
+      <select name="stockName[]" onchange="updateAvailability(this)" required></select>
+      <input type="text" name="customStockName[]" placeholder="Enter Custom Product Name" class="customNameInput hidden">
+      <input type="number" name="quantity[]" placeholder="Required Qty" min="0" required>
+      <label class="availableQuantity">Available Quantity: 0</label>
+      <button type="button" class="remove-btn" onclick="removeStock(this)">❌ Remove</button>
+    `;
+    stockContainer.appendChild(stockItem);
+
+    const newSelect = stockItem.querySelector('select[name="stockName[]"]');
+    populateSingleDropdown(newSelect);
+  }
+
+  function removeStock(button) {
+    button.parentElement.remove();
+  }
+
+  document.getElementById("stockForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    document.getElementById("stockForm").style.display = "none";
+    document.getElementById("lottieContainer").style.display = "block";
+
+    let formData = new FormData(event.target);
+    let formObject = { stockItems: [] };
+
+    let stockNames = formData.getAll("stockName[]");
+    let quantities = formData.getAll("quantity[]");
+    let customStockNames = formData.getAll("customStockName[]");
+
+    for (let i = 0; i < stockNames.length; i++) {
+      formObject.stockItems.push({
+        stockName: stockNames[i] === "Other" ? customStockNames[i] : stockNames[i],
+        quantity: quantities[i] || "0"
+      });
+    }
+
+    formObject.receiverName = formData.get("receiverName");
+    formObject.supplierName = formData.get("supplierName");
+    formObject.supplierDateTime = formData.get("supplierDateTime");
+    formObject.venue = formData.get("venue");
+    formObject.otherVenue = formData.get("otherVenue");
+
+    await fetch("https://script.google.com/macros/s/AKfycbw2LEQS-2eWOzoBrAffxXe1LQn5Jaayl1fZknm25KJ8E3iQA9PvOuoFSlwwsjLDrOTd/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formObject)
+    });
+  });
+
+  fetchProductData();
 </script>
 
 </body>
